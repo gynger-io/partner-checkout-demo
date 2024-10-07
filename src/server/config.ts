@@ -16,4 +16,7 @@ const { version: VERSION } = PackageJson;
 // server
 const SERVER_PORT = process.env.PORT || 3000;
 
-export { IS_DEV, VERSION, SERVER_PORT };
+const GYNGER_API_KEY: string = process.env.GYNGER_API_KEY!;
+const NGROK_URL = process.env.NGROK_URL;
+
+export { IS_DEV, VERSION, SERVER_PORT, GYNGER_API_KEY, NGROK_URL };

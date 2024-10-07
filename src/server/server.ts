@@ -1,9 +1,11 @@
+import 'reflect-metadata';
 import express from 'express';
 import path from 'path';
 import { apiRouter } from './routes/api-router';
 import { pagesRouter } from './routes/pages-router';
 import { staticsRouter } from './routes/statics-router';
 import * as config from './config';
+import { createWebhooks } from './utils';
 
 console.log(`*******************************************`);
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
@@ -21,3 +23,5 @@ app.use(pagesRouter());
 app.listen(config.SERVER_PORT, () => {
   console.log(`App listening on port ${config.SERVER_PORT}!`);
 });
+
+createWebhooks();

@@ -1,3 +1,5 @@
-import { IUserDTO } from './IUserDTO';
+// do something here
 
-export const getUserFullName = (user: IUserDTO): string => `${user.firstName} ${user.lastName}`;
+export function getCheese() {
+  return 'cheese';
+}

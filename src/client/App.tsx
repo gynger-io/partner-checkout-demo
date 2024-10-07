@@ -8,25 +8,20 @@ import { RouterExample } from './components/RouterExample';
 import { SideMenu } from './components/SideMenu';
 import { StyledComponentExample } from './components/StyledComponentExample';
 import { Usage } from './components/Usage';
-import { UsersList } from './components/UsersList';
+import { DealList } from './components/DealList';
 
 export const App = () => {
-
   return (
     <BrowserRouter>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Header />
         <SideMenu />
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
+        <Box component='main' sx={{ flexGrow: 1, p: 3 }}>
+          <Toolbar />
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='/usage' element={<Usage />} />
-            <Route path='/fetch-example' element={<UsersList />} />
-            <Route path='/lazy-example' element={<LazyLoadingExample />} />
-            <Route path='/styled-example' element={<StyledComponentExample />} />
-            <Route path='/router-example/:slug' element={<RouterExample />} />
+            <Route path='/deals' element={<DealList />} />
           </Routes>
         </Box>
       </Box>

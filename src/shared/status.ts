@@ -1,0 +1,1 @@
+export const OfferStatus = ['OFFER_CREATED', 'OFFER_VIEWED', 'OFFER_DECLINED', 'OFFER_ACCEPTED', 'BILL_PAID'];
