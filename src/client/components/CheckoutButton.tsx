@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 
 export default function CheckoutButton(props: { deal: Deal }) {
   useEffect(() => {
-    const widget = new GyngerCheckout({
+    GyngerCheckout.initWidget({
       token: props.deal.checkoutId, // Replace with actual token returned from createCheckoutSession request
       containerId: `gynger-checkout-widget-${props.deal.offerId}`,
       mode: 'sandbox', // Options: 'sandbox', 'production' (default: 'production')

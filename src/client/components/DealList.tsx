@@ -19,7 +19,7 @@ declare global {
    *~ existing declarations in the global namespace
    */
   class GyngerCheckout {
-    constructor(props: any);
+    static initWidget(props: any);
   }
 }
 
