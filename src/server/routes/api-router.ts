@@ -96,14 +96,14 @@ export function apiRouter(): Router {
         });
         break;
       case 'offer.status.updated':
-        await updateDealByOfferId(data.data.gyngerId, {
+        await updateDealByOfferId(data.data.id, {
           offerStatus: data.data.status,
           offerId: data.data.offerId,
           accountId: data.data.accountId,
         });
         break;
       case 'account.status.updated':
-        await updateDealByAccountId(data.data.gyngerId, {
+        await updateDealByAccountId(data.data.id, {
           accountStatus: data.data.status,
         });
     }
