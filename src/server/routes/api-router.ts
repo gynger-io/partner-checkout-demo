@@ -27,7 +27,7 @@ export function apiRouter(): Router {
       console.log(session);
       return res.json(session);
     } catch (error) {
-      console.error('Got error creating checkout', (error as any).response?.data);
+      console.error('Got error updating checkout', (error as any).response?.data);
       res.sendStatus(400);
     }
   });
@@ -51,15 +51,19 @@ export function apiRouter(): Router {
       console.log(session);
       const deal = await createDeal({
         name: session.productDescription,
-        amountPennies: Math.round(session.amountDollars * 100),
-        checkoutId: session.token,
+        amountPennies: session.amount,
+        checkoutId: session.id,
         accountId: session.accountId,
         offerId: session.offerId,
         offerStatus: session.status,
       });
       return res.json(deal);
     } catch (error) {
-      console.error('Got error creating checkout', (error as any).response?.data?.details?.validationErrors);
+      console.error(
+        'Got error creating checkout',
+        (error as any).response?.data,
+        (error as any).response?.data?.details?.validationErrors,
+      );
       res.sendStatus(400);
     }
   });
@@ -85,7 +89,7 @@ export function apiRouter(): Router {
     console.log('Got webhook data', data);
     switch (data.type) {
       case 'checkout.session.status.updated':
-        await updateDealByToken(data.data.token, {
+        await updateDealByToken(data.data.id, {
           offerStatus: data.data.status,
           offerId: data.data.offerId,
           accountId: data.data.accountId,
@@ -95,7 +99,7 @@ export function apiRouter(): Router {
         await updateDealByOfferId(data.data.gyngerId, {
           offerStatus: data.data.status,
           offerId: data.data.offerId,
-          accountId: data.data.gyngerAccountId,
+          accountId: data.data.accountId,
         });
         break;
       case 'account.status.updated':

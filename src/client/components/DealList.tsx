@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useEffect } from 'react';
 import { Deal } from '@shared/Deal';
 import { createDeal, deleteDeal, loadDealsAPI } from '../utils/api-facade';
-import { Box, TextField } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, Switch, TextField } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import CheckoutButton from './CheckoutButton';
@@ -27,9 +27,14 @@ export const DealList: React.FC = () => {
   const [deals, setDeals] = React.useState<Deal[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [data, setData] = React.useState<any>({});
-  const setAmountDollars = (amountDollars: number) => setData({ ...data, amountDollars });
+  const [data, setData] = React.useState<any>({
+    // autoBillCreation: true,
+  });
+  const setAmount = (amount: number) => setData({ ...data, amount });
   const setProductDescription = (productDescription: string) => setData({ ...data, productDescription });
+  const setExpirationDate = (expirationDate: string) => setData({ ...data, expirationDate });
+  const setBuyerEmail = (buyerEmail: string) => setData({ ...data, buyerEmail });
+  const setAutoBillCreation = (autoBillCreation: string) => setData({ ...data, autoBillCreation });
 
   const reloadDeals = async () => {
     const deals = await loadDealsAPI();
@@ -138,12 +143,12 @@ export const DealList: React.FC = () => {
                 style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
               >
                 <TextField
-                  onInput={(e) => setAmountDollars(parseInt(e.target.value, 10))}
+                  onInput={(e) => setAmount(parseInt(e.target.value, 10))}
                   type='text'
                   inputProps={{ type: 'number' }}
                   placeholder=''
-                  name='amountDollars'
-                  label='Amount In Dollars'
+                  name='amount'
+                  label='Amount In Pennies'
                 />
                 <TextField
                   onInput={(e) => setProductDescription(e.target.value)}
@@ -152,6 +157,24 @@ export const DealList: React.FC = () => {
                   name='productDescription'
                   label='Product Description'
                 />
+                <TextField
+                  onInput={(e) => setBuyerEmail(e.target.value)}
+                  type='text'
+                  placeholder=''
+                  name='buyerEmail'
+                  label='Buyer Email'
+                />
+                <TextField
+                  onInput={(e) => setExpirationDate(e.target.value)}
+                  type='text'
+                  placeholder='yyyy-mm-dd'
+                  name='expirationDate'
+                  label='Expiration Date'
+                />
+                {/*<FormControlLabel*/}
+                {/*  label='Auto Bill Creation'*/}
+                {/*  control={<Checkbox defaultChecked onChange={(e) => setAutoBillCreation(e.target.checked)} />}*/}
+                {/*/>*/}
                 <Button type='submit'>Submit</Button>
               </form>
             </CardContent>

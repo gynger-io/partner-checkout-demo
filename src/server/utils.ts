@@ -6,7 +6,7 @@ export async function createWebhooks() {
     try {
       const webhooks = await listWebhooks();
       console.log('Got webhooks', webhooks);
-      await Promise.all(webhooks.map((hook: any) => deleteWebhooks(hook.gyngerId)));
+      await Promise.all(webhooks.map((hook: any) => deleteWebhooks(hook.id)));
       const created = await createWebhook();
       console.log('created webhhook', created);
     } catch (error: any) {
