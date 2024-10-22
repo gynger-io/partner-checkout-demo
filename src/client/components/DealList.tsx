@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import DeleteIcon from '@mui/icons-material/Delete';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Deal } from '@shared/Deal';
 import { createDeal, deleteDeal, loadDealsAPI } from '../utils/api-facade';
 import { Box, Checkbox, FormControlLabel, Switch, TextField } from '@mui/material';
@@ -13,6 +13,8 @@ import { DataGrid, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
 import CheckoutButton from './CheckoutButton';
 import ChangeStatusButton from './ChangeStatusButton';
+import { CreateDealModal } from './CreateDealModal';
+import { CheckoutButtonSettingsModal } from './CheckoutButtonSettingsModal';
 
 declare global {
   /*~ Here, declare things that go in the global namespace, or augment
@@ -27,14 +29,13 @@ export const DealList: React.FC = () => {
   const [deals, setDeals] = React.useState<Deal[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [data, setData] = React.useState<any>({
-    // autoBillCreation: true,
+  const [settingsModalOpen, setSettingsModalOpen] = React.useState(false);
+  const [settings, updateSettings] = useState({
+    size: 'small', // Options: 'small', 'medium', 'large' (default: 'medium')
+    borderRadius: 'none', // Options: 'none', 'slight', 'round' (default: 'none')
+    theme: 'dark', // Options: 'light', 'dark' (default: 'dark')
+    border: 'solid', // Options: 'solid', 'none' (default: 'none')
   });
-  const setAmount = (amount: number) => setData({ ...data, amount });
-  const setProductDescription = (productDescription: string) => setData({ ...data, productDescription });
-  const setExpirationDate = (expirationDate: string) => setData({ ...data, expirationDate });
-  const setBuyerEmail = (buyerEmail: string) => setData({ ...data, buyerEmail });
-  const setAutoBillCreation = (autoBillCreation: string) => setData({ ...data, autoBillCreation });
 
   const reloadDeals = async () => {
     const deals = await loadDealsAPI();
@@ -51,16 +52,16 @@ export const DealList: React.FC = () => {
   const columns = [
     { field: 'id', headerName: 'ID' },
     { field: 'name', headerName: 'Name' },
-    { field: 'offerStatus', headerName: 'Status', flex: 1 },
-    { field: 'accountStatus', headerName: 'Account Status', flex: 1 },
+    { field: 'offerStatus', headerName: 'Status', width: 100 },
+    { field: 'accountStatus', headerName: 'Account Status', width: 200 },
     {
       field: 'actions',
       type: 'actions',
-      width: 300,
+      flex: 1,
       getActions: (params: GridRowParams<Deal>) => {
         return [
           <ChangeStatusButton key='status' deal={params.row} onComplete={reloadDeals} />,
-          <CheckoutButton key='cehk' deal={params.row} />,
+          <CheckoutButton key='cehk' deal={params.row} settings={settings} />,
         ];
       },
     },
@@ -107,80 +108,20 @@ export const DealList: React.FC = () => {
   return (
     <Grid item xs={12}>
       <Button onClick={() => setModalOpen(true)}>Create Deal</Button>
+      <Button onClick={() => setSettingsModalOpen(true)}>Update Button Styles</Button>
       <Card>
         <CardHeader title='Deals List' />
         <CardContent>
           {deals ? <DataGrid rows={deals} columns={columns} sx={{ border: 0 }} /> : 'No Deals found'}
         </CardContent>
       </Card>
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} aria-labelledby='modal-modal-title'>
-        <Box
-          style={{
-            position: 'absolute' as const,
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 800,
-            p: 4,
-          }}
-        >
-          <Card>
-            <CardContent>
-              <Typography id='modal-modal-title' variant='h6' component='h2'>
-                Create Deal
-              </Typography>
-            </CardContent>
-            <CardContent>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  createDeal(data).then(async () => {
-                    setData({});
-                    await reloadDeals();
-                    setModalOpen(false);
-                  });
-                }}
-                style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
-              >
-                <TextField
-                  onInput={(e) => setAmount(parseInt(e.target.value, 10))}
-                  type='text'
-                  inputProps={{ type: 'number' }}
-                  placeholder=''
-                  name='amount'
-                  label='Amount In Pennies'
-                />
-                <TextField
-                  onInput={(e) => setProductDescription(e.target.value)}
-                  type='text'
-                  placeholder=''
-                  name='productDescription'
-                  label='Product Description'
-                />
-                <TextField
-                  onInput={(e) => setBuyerEmail(e.target.value)}
-                  type='text'
-                  placeholder=''
-                  name='buyerEmail'
-                  label='Buyer Email'
-                />
-                <TextField
-                  onInput={(e) => setExpirationDate(e.target.value)}
-                  type='text'
-                  placeholder='yyyy-mm-dd'
-                  name='expirationDate'
-                  label='Expiration Date'
-                />
-                {/*<FormControlLabel*/}
-                {/*  label='Auto Bill Creation'*/}
-                {/*  control={<Checkbox defaultChecked onChange={(e) => setAutoBillCreation(e.target.checked)} />}*/}
-                {/*/>*/}
-                <Button type='submit'>Submit</Button>
-              </form>
-            </CardContent>
-          </Card>
-        </Box>
-      </Modal>
+      <CheckoutButtonSettingsModal
+        isOpen={settingsModalOpen}
+        close={() => setSettingsModalOpen(false)}
+        updateSettings={updateSettings}
+        settings={settings}
+      />
+      <CreateDealModal isOpen={modalOpen} close={() => setModalOpen(false)} onComplete={reloadDeals} />
     </Grid>
   );
 };
