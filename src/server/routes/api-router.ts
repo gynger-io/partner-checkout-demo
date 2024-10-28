@@ -61,7 +61,7 @@ export function apiRouter(): Router {
     } catch (error) {
       console.error(
         'Got error creating checkout',
-        (error as any).response?.data || error?.response || error,
+        (error as any).response?.data || (error as any)?.response || error,
         (error as any).response?.data?.details?.validationErrors,
       );
       res.sendStatus(400);
