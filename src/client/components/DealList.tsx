@@ -61,7 +61,7 @@ export const DealList: React.FC = () => {
       getActions: (params: GridRowParams<Deal>) => {
         return [
           <ChangeStatusButton key='status' deal={params.row} onComplete={reloadDeals} />,
-          <CheckoutButton key='cehk' deal={params.row} settings={settings} />,
+          <CheckoutButton key={`key_${params.row.checkoutId}`} deal={params.row} settings={settings} />,
         ];
       },
     },
