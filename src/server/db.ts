@@ -3,7 +3,7 @@ import { Deal } from '@shared/Deal';
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
-  database: 'test',
+  database: process.env.DB_NAME || 'local.db',
   synchronize: true,
   logging: true,
   entities: [Deal],
