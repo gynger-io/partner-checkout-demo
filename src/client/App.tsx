@@ -3,11 +3,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'; // Pages
 import { Header } from './components/Header';
 import { Home } from './components/Home';
-import { LazyLoadingExample } from './components/LazyLoadingExample';
-import { RouterExample } from './components/RouterExample';
 import { SideMenu } from './components/SideMenu';
-import { StyledComponentExample } from './components/StyledComponentExample';
-import { Usage } from './components/Usage';
 import { DealList } from './components/DealList';
 
 export const App = () => {

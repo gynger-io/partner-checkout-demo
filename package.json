@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "engines": {
-    "node": ">18"
+    "node": ">24"
   },
   "scripts": {
     "clean-up-example-code": "node clean-up-example-code.js && rimraf clean-up-example-code.js",

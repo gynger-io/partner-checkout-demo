@@ -1,0 +1,73 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Docker Image
+    environment: staging
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.GOOGLE_PROJECT }}
+          credentials_json: ${{ secrets.GOOGLE_JSON_KEY }}
+
+      - name: Configure Docker auth
+        run: gcloud auth configure-docker ${{ vars.SERVICE_REGION }}-docker.pkg.dev
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push image with Buildx
+        run: |
+          docker buildx build \
+            --file ./Dockerfile \
+            --tag ${{ vars.SERVICE_REGION }}-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/partner-checkout-demo/partner-checkout-demo-${{ github.sha }} \
+            --tag ${{ vars.SERVICE_REGION }}-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/partner-checkout-demo/partner-checkout-demo-latest \
+            --push \
+            .
+
+  deploy:
+    name: Deploy to Cloud Run
+    environment: staging
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.GOOGLE_PROJECT }}
+          credentials_json: ${{ secrets.GOOGLE_JSON_KEY }}
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy partner-checkout-demo \
+            --image ${{ vars.SERVICE_REGION }}-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/partner-checkout-demo/partner-checkout-demo-${{ github.sha }} \
+            --platform managed \
+            --region ${{ vars.SERVICE_REGION }} \
+            --allow-unauthenticated \
+            --set-env-vars "NODE_ENV=production,GYNGER_API_URL=${{ secrets.GYNGER_API_URL }},GYNGER_API_KEY=${{ secrets.GYNGER_API_KEY }},GYNGER_PUBLIC_KEY=${{ secrets.GYNGER_PUBLIC_KEY }}" \
+            --port 8080 \
+            --memory 512Mi \
+            --cpu 1 \
+            --min-instances 0 \
+            --max-instances 10
+
+      - name: Show deployment URL
+        run: |
+          gcloud run services describe partner-checkout-demo \
+            --platform managed \
+            --region ${{ vars.SERVICE_REGION }} \
+            --format 'value(status.url)'

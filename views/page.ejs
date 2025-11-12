@@ -7,13 +7,23 @@
         </title>
         <link rel="icon" href="/assets/favicon.ico"/>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+        <% if (IS_LOCAL) { %>
+        <script src="/local-widget/gynger-checkout.bundle.js"></script>
+        <% } else { %>
         <script src="https://storage.googleapis.com/gynger-checkout-widget/gynger-checkout-staging.bundle.js"></script>
+        <% } %>
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
         <div class="container">
             <div id="app">Loading...</div>
         </div>
+        <script>
+            // Make server config available to client
+            window.APP_CONFIG = {
+                GYNGER_PUBLIC_KEY: '<%- GYNGER_PUBLIC_KEY %>'
+            };
+        </script>
         <% if (IS_DEV) { %>
             <script type="module">
                 import RefreshRuntime from 'http://localhost:5173/@react-refresh'
@@ -24,7 +34,7 @@
             </script>
         <% } %>
 
-        <% 
+        <%
             Object.keys(manifest).forEach((key) => {
                 %><script type="module" src="<%- manifest[key].file %>"></script><%
             })
