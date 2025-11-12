@@ -30,6 +30,7 @@ export const DealList: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = React.useState(false);
+  const [previewEnabled, setPreviewEnabled] = React.useState(true);
   const [settings, updateSettings] = useState({
     size: 'small', // Options: 'small', 'medium', 'large' (default: 'medium')
     borderRadius: 'none', // Options: 'none', 'slight', 'round' (default: 'none')
@@ -61,7 +62,12 @@ export const DealList: React.FC = () => {
       getActions: (params: GridRowParams<Deal>) => {
         return [
           <ChangeStatusButton key='status' deal={params.row} onComplete={reloadDeals} />,
-          <CheckoutButton key={`key_${params.row.checkoutId}`} deal={params.row} settings={settings} />,
+          <CheckoutButton
+            key={`key_${params.row.checkoutId}`}
+            deal={params.row}
+            settings={settings}
+            previewEnabled={previewEnabled}
+          />,
         ];
       },
     },
@@ -107,8 +113,20 @@ export const DealList: React.FC = () => {
 
   return (
     <Grid item xs={12}>
-      <Button onClick={() => setModalOpen(true)}>Create Deal</Button>
-      <Button onClick={() => setSettingsModalOpen(true)}>Update Button Styles</Button>
+      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2 }}>
+        <Button variant='contained' onClick={() => setModalOpen(true)}>
+          Create Deal
+        </Button>
+        <Button variant='outlined' onClick={() => setSettingsModalOpen(true)}>
+          Update Button Styles
+        </Button>
+        <FormControlLabel
+          control={
+            <Switch checked={previewEnabled} onChange={(e) => setPreviewEnabled(e.target.checked)} color='primary' />
+          }
+          label='Preview Enabled'
+        />
+      </Box>
       <Card>
         <CardHeader title='Deals List' />
         <CardContent>
