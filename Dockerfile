@@ -1,5 +1,8 @@
 FROM node:24-alpine
 
+# Install build dependencies for native modules (sqlite3)
+RUN apk add --no-cache python3 py3-setuptools make g++
+
 # Create app directory
 WORKDIR /usr/app
 
